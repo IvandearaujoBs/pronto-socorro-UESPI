@@ -55,7 +55,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       // Verificar estado do banco
       const pacientes = db.prepare('SELECT COUNT(*) as total FROM pacientes').get() as CountResult
       const triagens = db.prepare('SELECT COUNT(*) as total FROM triagem').get() as CountResult
-      const fila = db.prepare('SELECT COUNT(*) as total FROM fila').get() as CountResult
+      const fila = db.prepare("SELECT COUNT(*) as total FROM fila WHERE status IN ('esperando', 'triagem_concluida')").get() as CountResult
       
       const filaDetalhada = db.prepare(`
         SELECT f.status, COUNT(*) as quantidade
@@ -64,10 +64,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       `).all() as FilaStatus[]
 
       const pacientesComTriagem = db.prepare(`
-        SELECT p.nome, f.status, t.risco
+        SELECT p.nome, 
+               COALESCE(f.status, CASE WHEN h.id IS NOT NULL THEN 'removido' ELSE NULL END) as status, 
+               t.risco, 
+               h.motivo as motivo_remocao
         FROM pacientes p
-        LEFT JOIN fila f ON p.id = f.paciente_id
+        LEFT JOIN fila f ON f.id = (
+          SELECT id FROM fila WHERE paciente_id = p.id ORDER BY id DESC LIMIT 1
+        )
         LEFT JOIN triagem t ON p.id = t.paciente_id
+        LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
         ORDER BY p.id
       `).all() as PacienteDetalhado[]
 

@@ -13,7 +13,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         SELECT p.id, p.nome, p.cpf, p.nascimento
         FROM pacientes p
         LEFT JOIN triagem t ON p.id = t.paciente_id
-        WHERE t.id IS NULL
+        LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
+        WHERE t.id IS NULL AND h.id IS NULL
         ORDER BY p.nome
       `).all()
 

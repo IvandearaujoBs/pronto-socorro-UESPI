@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 
@@ -26,6 +26,9 @@ export default function Triagem() {
     risco: ''
   })
   const [mensagem, setMensagem] = useState('')
+  const [modalRemover, setModalRemover] = useState<{id: number, nome: string} | null>(null)
+  const [motivoRemocao, setMotivoRemocao] = useState('')
+  const motivoRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     carregarPacientes()
@@ -151,9 +154,17 @@ export default function Triagem() {
                             <div className="text-sm text-gray-600">CPF: {paciente.cpf}</div>
                           </div>
                         </div>
-                        <div className="text-xs text-gray-500">
-                          Aguardando triagem
-                        </div>
+                        <button
+                          className="ml-4 px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs"
+                          onClick={e => {
+                            e.stopPropagation();
+                            setModalRemover({id: paciente.id, nome: paciente.nome});
+                            setMotivoRemocao('');
+                            setTimeout(() => motivoRef.current?.focus(), 100);
+                          }}
+                        >
+                          Excluir
+                        </button>
                       </div>
                     </div>
                   ))
@@ -190,7 +201,7 @@ export default function Triagem() {
                     type="text"
                     value={triagem.pressao}
                     onChange={(e) => setTriagem({ ...triagem, pressao: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-400 rounded-lg bg-white text-black placeholder-gray-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-600"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-600"
                     placeholder="Ex: 120/80"
                   />
                 </div>
@@ -203,7 +214,7 @@ export default function Triagem() {
                     type="text"
                     value={triagem.temperatura}
                     onChange={(e) => setTriagem({ ...triagem, temperatura: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-400 rounded-lg bg-white text-black placeholder-gray-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-600"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-600"
                     placeholder="Ex: 36.5"
                   />
                 </div>
@@ -216,7 +227,7 @@ export default function Triagem() {
                     type="text"
                     value={triagem.batimentos}
                     onChange={(e) => setTriagem({ ...triagem, batimentos: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-400 rounded-lg bg-white text-black placeholder-gray-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-600"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-600"
                     placeholder="Ex: 80"
                   />
                 </div>
@@ -229,7 +240,7 @@ export default function Triagem() {
                     required
                     value={triagem.risco}
                     onChange={(e) => setTriagem({ ...triagem, risco: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-400 rounded-lg bg-white text-black focus:ring-2 focus:ring-orange-500 focus:border-orange-600"
+                    className="w-full px-3 py-2 border border-gray-400 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-600"
                   >
                     <option value="" className="text-gray-500">Selecione o nível de risco</option>
                     {niveisRisco.map((nivel) => (
@@ -277,6 +288,48 @@ export default function Triagem() {
           </div>
         </div>
       </main>
+
+      {/* Modal de motivo da remoção */}
+      {modalRemover && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h2 className="text-lg font-semibold mb-2">Remover paciente</h2>
+            <p className="mb-2">Informe o motivo da remoção de <span className="font-bold">{modalRemover.nome}</span>:</p>
+            <textarea
+              ref={motivoRef}
+              className="w-full border border-gray-300 rounded p-2 mb-4 text-gray-900"
+              rows={3}
+              value={motivoRemocao}
+              onChange={e => setMotivoRemocao(e.target.value)}
+              placeholder="Digite o motivo..."
+            />
+            <div className="flex justify-end space-x-2">
+              <button
+                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                onClick={() => setModalRemover(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-red-300"
+                disabled={!motivoRemocao.trim()}
+                onClick={async () => {
+                  await fetch(`/api/pacientes/${modalRemover.id}/remover`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ motivo: motivoRemocao })
+                  });
+                  setModalRemover(null);
+                  setMotivoRemocao('');
+                  carregarPacientes();
+                }}
+              >
+                Confirmar Remoção
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 } 

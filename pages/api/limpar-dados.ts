@@ -16,6 +16,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       // Resetar os auto-increment (corrigido)
       db.prepare('DELETE FROM sqlite_sequence WHERE name IN (?, ?, ?)').run('pacientes', 'triagem', 'fila')
 
+      // Corrigir pacientes presos em 'em_atendimento'
+      db.prepare("UPDATE fila SET status = 'atendido' WHERE status = 'em_atendimento'").run();
+
       console.log('Banco de dados limpo com sucesso')
       
       res.status(200).json({ 

@@ -84,7 +84,7 @@ export default function Recepcao() {
                     required
                     value={paciente.nome}
                     onChange={(e) => setPaciente({ ...paciente, nome: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="Digite o nome completo"
                   />
                 </div>
@@ -99,7 +99,7 @@ export default function Recepcao() {
                     required
                     value={formatarCPF(paciente.cpf)}
                     onChange={handleCPFChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="000.000.000-00"
                     maxLength={14}
                   />
@@ -114,7 +114,7 @@ export default function Recepcao() {
                     id="nascimento"
                     value={paciente.nascimento}
                     onChange={(e) => setPaciente({ ...paciente, nascimento: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   />
                 </div>
 

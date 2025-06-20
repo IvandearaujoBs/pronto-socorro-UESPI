@@ -46,7 +46,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         FROM fila f
         INNER JOIN pacientes p ON f.paciente_id = p.id
         INNER JOIN triagem t ON p.id = t.paciente_id
-        WHERE f.status IN ('esperando', 'triagem_concluida')
+        LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
+        WHERE f.status IN ('esperando', 'triagem_concluida') AND h.id IS NULL
       `).all() as FilaItem[]
 
       // Calcular se o paciente estourou o tempo

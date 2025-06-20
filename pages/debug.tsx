@@ -16,6 +16,7 @@ interface DebugData {
     nome: string
     status: string | null
     risco: string | null
+    motivo_remocao?: string
   }>
   pacientesComTempoEstourado: Array<{
     id: number
@@ -214,7 +215,7 @@ export default function Debug() {
                       <tbody>
                         {debugData.pacientesComTempoEstourado.map((paciente) => (
                           <tr key={paciente.id} className={`border-b ${paciente.tempo_estourado ? 'bg-red-50' : ''}`}>
-                            <td className="px-4 py-2 font-medium">{paciente.nome}</td>
+                            <td className="px-4 py-2 font-medium text-gray-900">{paciente.nome}</td>
                             <td className="px-4 py-2">
                               <span className={`px-2 py-1 rounded-full text-xs text-white ${
                                 paciente.risco === 'vermelho' ? 'bg-red-500' :
@@ -281,34 +282,41 @@ export default function Debug() {
                         <th className="px-4 py-2 text-left">Nome</th>
                         <th className="px-4 py-2 text-left">Status da Fila</th>
                         <th className="px-4 py-2 text-left">Risco</th>
+                        <th className="px-4 py-2 text-left">Motivo da Remoção</th>
                       </tr>
                     </thead>
                     <tbody>
                       {debugData.pacientesDetalhado.map((paciente, index) => (
                         <tr key={index} className="border-b">
-                          <td className="px-4 py-2">{paciente.nome}</td>
+                          <td className="px-4 py-2 text-gray-900">{paciente.nome}</td>
                           <td className="px-4 py-2">
                             <span className={`px-2 py-1 rounded-full text-xs ${
                               paciente.status === 'esperando' ? 'bg-yellow-100 text-yellow-800' :
                               paciente.status === 'triagem_concluida' ? 'bg-green-100 text-green-800' :
                               paciente.status === 'em_atendimento' ? 'bg-blue-100 text-blue-800' :
                               paciente.status === 'atendido' ? 'bg-gray-100 text-gray-800' :
+                              paciente.status === 'removido' ? 'bg-red-600 text-white font-bold' :
                               'bg-red-100 text-red-800'
                             }`}>
-                              {paciente.status || 'Sem status'}
+                              {paciente.status === 'removido' ? 'Removido' : (paciente.status || 'Sem status')}
                             </span>
                           </td>
                           <td className="px-4 py-2">
-                            <span className={`px-2 py-1 rounded-full text-xs text-white ${
-                              paciente.risco === 'vermelho' ? 'bg-red-500' :
-                              paciente.risco === 'laranja' ? 'bg-orange-500' :
-                              paciente.risco === 'amarelo' ? 'bg-yellow-500' :
-                              paciente.risco === 'verde' ? 'bg-green-500' :
-                              paciente.risco === 'azul' ? 'bg-blue-500' :
-                              'bg-gray-500'
-                            }`}>
-                              {paciente.risco || 'Sem risco'}
-                            </span>
+                            {paciente.risco ? (
+                              <span className={`px-2 py-1 rounded-full text-xs text-white ${
+                                paciente.risco === 'vermelho' ? 'bg-red-500' :
+                                paciente.risco === 'laranja' ? 'bg-orange-500' :
+                                paciente.risco === 'amarelo' ? 'bg-yellow-500' :
+                                paciente.risco === 'verde' ? 'bg-green-500' :
+                                paciente.risco === 'azul' ? 'bg-blue-500' :
+                                'bg-gray-500'
+                              }`}>
+                                {paciente.risco}
+                              </span>
+                            ) : 'Sem risco'}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-red-700">
+                            {paciente.status === 'removido' && paciente.motivo_remocao ? paciente.motivo_remocao : ''}
                           </td>
                         </tr>
                       ))}
