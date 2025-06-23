@@ -103,16 +103,17 @@ export default function Debug() {
   return (
     <>
       <Head>
-        <title>Debug - Sistema de Fila</title>
+        <title>Debug - ClinicFlow</title>
+        <meta http-equiv="refresh" content="5" />
       </Head>
       <main className="min-h-screen bg-gray-100 p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <Link href="/" className="text-blue-600 hover:text-blue-800">
-              ← Voltar ao Menu Principal
-            </Link>
+        <div className="container mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-4xl font-bold text-gray-800">Debug - ClinicFlow</h1>
             <div className="flex items-center space-x-4">
-              <h1 className="text-3xl font-bold text-gray-800">🐛 Debug do Sistema</h1>
+              <Link href="/" className="text-blue-600 hover:text-blue-800 transition-colors">
+                ← Voltar ao Menu Principal
+              </Link>
               <button
                 onClick={limparDados}
                 disabled={limpezaLoading}

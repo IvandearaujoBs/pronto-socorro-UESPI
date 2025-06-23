@@ -133,7 +133,8 @@ export default function Fila() {
   return (
     <>
       <Head>
-        <title>Fila de Espera - Sistema de Fila</title>
+        <title>Fila de Atendimento - ClinicFlow</title>
+        <meta name="description" content="Fila de espera em tempo real" />
       </Head>
       <main className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
         <div className="container mx-auto px-4 py-8">
@@ -142,7 +143,7 @@ export default function Fila() {
             <Link href="/" className="text-purple-600 hover:text-purple-800">
               ← Voltar ao Menu Principal
             </Link>
-            <h1 className="text-3xl font-bold text-gray-800">📋 Fila de Espera</h1>
+            <h1 className="text-3xl font-bold text-gray-800">📋 Fila de Atendimento</h1>
           </div>
 
           {/* Estatísticas */}

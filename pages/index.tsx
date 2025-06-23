@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface Estatisticas {
   resumo: {
@@ -38,7 +39,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Sistema de Fila - Pronto Socorro</title>
+        <title>ClinicFlow - Emergency Queue Management</title>
         <meta name="description" content="Sistema de gerenciamento de fila do pronto socorro" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -46,25 +47,31 @@ export default function Home() {
       <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">
-              🏥 Sistema de Fila - Pronto Socorro
+            <Image
+              src="/logo.png"
+              alt="ClinicFlow Logo"
+              width={600}
+              height={150}
+              className="mx-auto mb-6 mix-blend-multiply"
+              priority
+            />
+            <h1 className="text-5xl font-bold text-blue-900 mb-2">
+              ClinicFlow
             </h1>
             <p className="text-xl text-gray-600">
-              Gerencie pacientes, triagem e atendimento médico
+              emergency queue management system
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {/* Recepção */}
-            <Link href="/recepcao" className="group">
-              <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-blue-500">
-                <div className="text-center">
-                  <div className="text-4xl mb-4">👥</div>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2">Recepção</h2>
-                  <p className="text-gray-600 text-sm">
-                    Cadastro e registro de pacientes
-                  </p>
-                </div>
+            <Link href="/recepcao" className="block p-6 bg-white rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+              <div className="text-center">
+                <div className="text-4xl mb-4">👥</div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-2">Recepção</h2>
+                <p className="text-gray-600 text-sm">
+                  Cadastro e registro de pacientes
+                </p>
               </div>
             </Link>
 

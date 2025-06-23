@@ -18,6 +18,7 @@ export default function Recepcao() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('Tentando cadastrar paciente:', paciente)
     
     try {
       const response = await fetch('/api/pacientes', {
@@ -28,14 +29,17 @@ export default function Recepcao() {
         body: JSON.stringify(paciente),
       })
 
+      console.log('Response status:', response.status)
       if (response.ok) {
         setMensagem('Patient registered successfully!')
         setPaciente({ nome: '', cpf: '', nascimento: '' })
       } else {
         const error = await response.json()
+        console.log('Error response:', error)
         setMensagem(`Error: ${error.message}`)
       }
     } catch (error) {
+      console.error('Error registering patient:', error)
       setMensagem('Error registering patient')
     }
   }
@@ -54,7 +58,7 @@ export default function Recepcao() {
   return (
     <>
       <Head>
-        <title>Recepção - Sistema de Fila</title>
+        <title>Recepção - ClinicFlow</title>
       </Head>
       <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="container mx-auto px-4 py-8">

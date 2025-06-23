@@ -12,11 +12,26 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       const pacientes = db.prepare(`
         SELECT p.id, p.nome, p.cpf, p.nascimento
         FROM pacientes p
+        INNER JOIN fila f ON p.id = f.paciente_id
         LEFT JOIN triagem t ON p.id = t.paciente_id
         LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
-        WHERE t.id IS NULL AND h.id IS NULL
+        WHERE f.status LIKE '%esperando%' AND t.id IS NULL AND h.id IS NULL
         ORDER BY p.nome
       `).all()
+
+      // Debug: verificar todos os pacientes na fila
+      const todosPacientesFila = db.prepare(`
+        SELECT p.id, p.nome, f.status, t.id as triagem_id, h.id as remocao_id
+        FROM pacientes p
+        LEFT JOIN fila f ON p.id = f.paciente_id
+        LEFT JOIN triagem t ON p.id = t.paciente_id
+        LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
+        ORDER BY p.id
+      `).all()
+      
+      console.log('Todos os pacientes na fila:', todosPacientesFila)
+      console.log('Pacientes sem triagem encontrados:', pacientes.length)
+      console.log('Pacientes:', pacientes)
 
       res.status(200).json(pacientes)
     } catch (error) {

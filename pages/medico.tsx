@@ -143,7 +143,7 @@ export default function Medico() {
   return (
     <>
       <Head>
-        <title>Médico - Sistema de Fila</title>
+        <title>Médico - ClinicFlow</title>
       </Head>
       <main className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
         <div className="container mx-auto px-4 py-8">

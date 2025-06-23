@@ -38,8 +38,10 @@ export default function Triagem() {
     try {
       // Buscar apenas pacientes que ainda não passaram pela triagem
       const response = await fetch('/api/pacientes/sem-triagem')
+      console.log('Response status:', response.status)
       if (response.ok) {
         const data = await response.json()
+        console.log('Pacientes carregados:', data)
         setPacientes(data)
       } else {
         console.error('Error loading patients:', response.statusText)
@@ -107,7 +109,7 @@ export default function Triagem() {
   return (
     <>
       <Head>
-        <title>Triagem - Sistema de Fila</title>
+        <title>Triagem - ClinicFlow</title>
       </Head>
       <main className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100">
         <div className="container mx-auto px-4 py-8">

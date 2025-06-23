@@ -64,14 +64,20 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       `).all() as FilaStatus[]
 
       const pacientesComTriagem = db.prepare(`
-        SELECT p.nome, 
+        SELECT DISTINCT p.nome, 
                COALESCE(f.status, CASE WHEN h.id IS NOT NULL THEN 'removido' ELSE NULL END) as status, 
                t.risco, 
                h.motivo as motivo_remocao
         FROM pacientes p
-        LEFT JOIN fila f ON f.id = (
-          SELECT id FROM fila WHERE paciente_id = p.id ORDER BY id DESC LIMIT 1
-        )
+        LEFT JOIN (
+          SELECT DISTINCT paciente_id, status
+          FROM fila 
+          WHERE id IN (
+            SELECT MAX(id) 
+            FROM fila 
+            GROUP BY paciente_id
+          )
+        ) f ON p.id = f.paciente_id
         LEFT JOIN triagem t ON p.id = t.paciente_id
         LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
         ORDER BY p.id
