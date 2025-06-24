@@ -18,7 +18,7 @@ export default function Home() {
 
   useEffect(() => {
     carregarEstatisticas()
-    const interval = setInterval(carregarEstatisticas, 5000) // Atualizar a cada 5 segundos
+    const interval = setInterval(carregarEstatisticas, 5000) // Atualizar a cada 5 segundos AQUI
     return () => clearInterval(interval)
   }, [])
 
@@ -47,14 +47,14 @@ export default function Home() {
       <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center mb-12">
-            <Image
+            {/* <Image
               src="/logo.png"
               alt="ClinicFlow Logo"
               width={600}
               height={150}
               className="mx-auto mb-6 mix-blend-multiply"
               priority
-            />
+            /> */}
             <h1 className="text-5xl font-bold text-blue-900 mb-2">
               ClinicFlow
             </h1>
@@ -66,12 +66,12 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {/* Recepção */}
             <Link href="/recepcao" className="block p-6 bg-white rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
-              <div className="text-center">
-                <div className="text-4xl mb-4">👥</div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">Recepção</h2>
-                <p className="text-gray-600 text-sm">
-                  Cadastro e registro de pacientes
-                </p>
+                <div className="text-center">
+                  <div className="text-4xl mb-4">👥</div>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">Recepção</h2>
+                  <p className="text-gray-600 text-sm">
+                    Cadastro e registro de pacientes
+                  </p>
               </div>
             </Link>
 
@@ -157,6 +157,15 @@ export default function Home() {
           </div>
         </div>
       </main>
+      <footer className="w-full bg-gradient-to-br from-purple-50 to-indigo-100 py-4 text-center text-sm text-gray-600 border-0">
+        <div>
+          <strong>ClinicFlow</strong> — Sistema de Gerenciamento de Fila do Pronto Socorro<br />
+          Projeto acadêmico desenvolvido por: <strong>Ivanildo Araujo</strong>, <strong>Jefferson Melo</strong> e <strong>Adonias Terceiro</strong><br />
+          Direitos reservados © {new Date().getFullYear()}<br />
+          Intuito: Otimizar o atendimento e triagem de pacientes segundo o Protocolo de Manchester.<br />
+          Contato: <a href="https://wa.me/5586995880501" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">WhatsApp: (86) 99588-0501</a>
+        </div>
+      </footer>
     </>
   )
 } 

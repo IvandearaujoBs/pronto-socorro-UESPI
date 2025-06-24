@@ -36,7 +36,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(409).json({ error: 'CPF já cadastrado' })
       }
 
-      // Inserir novo paciente
+      // Inserir novo paciente AQUI
       const result = db.prepare(`
         INSERT INTO pacientes (nome, cpf, nascimento) 
         VALUES (?, ?, ?)

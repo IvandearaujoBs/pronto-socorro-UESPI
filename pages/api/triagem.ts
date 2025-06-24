@@ -16,33 +16,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         })
       }
 
-      // Verificar se paciente existe
-      const paciente = db.prepare(
-        'SELECT id FROM pacientes WHERE id = ?'
-      ).get(pacienteId)
-
-      if (!paciente) {
-        return res.status(404).json({ error: 'Paciente não encontrado' })
-      }
-
-      // Verificar se já existe triagem para este paciente
-      const triagemExistente = db.prepare(
-        'SELECT id FROM triagem WHERE paciente_id = ?'
-      ).get(pacienteId)
-
-      if (triagemExistente) {
-        return res.status(409).json({
-          error: 'Paciente já possui triagem realizada'
-        })
-      }
-
-      // Inserir triagem
       db.prepare(`
-        INSERT INTO triagem (paciente_id, pressao, temperatura, batimentos, risco) 
-        VALUES (?, ?, ?, ?, ?)
-      `).run(pacienteId, pressao || null, temperatura || null, batimentos || null, risco)
+        INSERT INTO triagem (paciente_id, pressao, temperatura, batimentos, risco, data) 
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).run(pacienteId, pressao || null, temperatura || null, batimentos || null, risco, new Date().toISOString())
 
-      // Atualizar status da fila para 'triagem_concluida'
       db.prepare(`
         UPDATE fila 
         SET status = 'triagem_concluida' 

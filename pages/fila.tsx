@@ -18,6 +18,9 @@ interface PacienteFila {
   }
   status: string
   chamada_em: string
+  data_triagem: string
+  minutosEspera: number
+  tempoMax: number
 }
 
 export default function Fila() {
@@ -35,7 +38,7 @@ export default function Fila() {
 
   useEffect(() => {
     carregarFila()
-    const interval = setInterval(carregarFila, 3000) // Atualiza a cada 3 segundos
+    const interval = setInterval(carregarFila, 3000)
     return () => clearInterval(interval)
   }, [])
 
@@ -45,8 +48,6 @@ export default function Fila() {
       if (response.ok) {
         const data = await response.json()
         setFila(data)
-        
-        // Calcular estatísticas
         const stats = {
           total: data.length,
           porRisco: {
@@ -66,7 +67,6 @@ export default function Fila() {
 
   const getCorRisco = (risco: string | null) => {
     if (!risco) return 'bg-gray-500'
-    
     const cores = {
       vermelho: 'bg-red-500',
       laranja: 'bg-orange-500',
@@ -80,7 +80,6 @@ export default function Fila() {
 
   const getLabelRisco = (risco: string | null) => {
     if (!risco) return 'Sem Risco'
-    
     const labels = {
       vermelho: 'Vermelho - Emergência',
       laranja: 'Laranja - Muito Urgente',
@@ -92,24 +91,8 @@ export default function Fila() {
     return labels[risco as keyof typeof labels] || risco
   }
 
-  const calcularTempoEspera = (chamadaEm: string) => {
-    const agora = new Date()
-    const chamada = new Date(chamadaEm)
-    const diffMs = agora.getTime() - chamada.getTime()
-    const diffMins = Math.floor(diffMs / 60000)
-    
-    if (diffMins < 60) {
-      return `${diffMins} min`
-    } else {
-      const horas = Math.floor(diffMins / 60)
-      const mins = diffMins % 60
-      return `${horas}h ${mins}min`
-    }
-  }
-
   const getTempoMaximo = (risco: string | null) => {
     if (!risco) return 0
-    
     const tempos = {
       vermelho: 0,
       laranja: 10,
@@ -126,8 +109,15 @@ export default function Fila() {
     const chamada = new Date(chamadaEm)
     const diffMs = agora.getTime() - chamada.getTime()
     const diffMins = Math.floor(diffMs / 60000)
-    
     return diffMins > tempoMaximo
+  }
+
+  // Função utilitária para converter para horário de Brasília
+  function toBrasiliaDate(dateString: string) {
+    const utcDate = new Date(dateString);
+    // Ajusta para UTC-3
+    const brasiliaOffset = -3 * 60; // minutos
+    return new Date(utcDate.getTime() + brasiliaOffset * 60000);
   }
 
   return (
@@ -138,54 +128,43 @@ export default function Fila() {
       </Head>
       <main className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
         <div className="container mx-auto px-4 py-8">
-          {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <Link href="/" className="text-purple-600 hover:text-purple-800">
               ← Voltar ao Menu Principal
             </Link>
             <h1 className="text-3xl font-bold text-gray-800">📋 Fila de Atendimento</h1>
           </div>
-
-          {/* Estatísticas */}
           <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
               📊 Estatísticas da Fila
             </h2>
-            
             <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
               <div className="text-center p-4 bg-purple-50 rounded-lg">
                 <div className="text-3xl font-bold text-purple-600">{estatisticas.total}</div>
                 <div className="text-sm text-gray-600">Total na Fila</div>
               </div>
-              
               <div className="text-center p-4 bg-red-50 rounded-lg">
                 <div className="text-3xl font-bold text-red-600">{estatisticas.porRisco.vermelho}</div>
                 <div className="text-sm text-gray-600">Vermelho</div>
               </div>
-              
               <div className="text-center p-4 bg-orange-50 rounded-lg">
                 <div className="text-3xl font-bold text-orange-600">{estatisticas.porRisco.laranja}</div>
                 <div className="text-sm text-gray-600">Laranja</div>
               </div>
-              
               <div className="text-center p-4 bg-yellow-50 rounded-lg">
                 <div className="text-3xl font-bold text-yellow-600">{estatisticas.porRisco.amarelo}</div>
                 <div className="text-sm text-gray-600">Amarelo</div>
               </div>
-              
               <div className="text-center p-4 bg-green-50 rounded-lg">
                 <div className="text-3xl font-bold text-green-600">{estatisticas.porRisco.verde}</div>
                 <div className="text-sm text-gray-600">Verde</div>
               </div>
-              
               <div className="text-center p-4 bg-blue-50 rounded-lg">
                 <div className="text-3xl font-bold text-blue-600">{estatisticas.porRisco.azul}</div>
                 <div className="text-sm text-gray-600">Azul</div>
               </div>
             </div>
           </div>
-
-          {/* Lista da Fila */}
           <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-gray-800">
@@ -195,7 +174,6 @@ export default function Fila() {
                 Atualizado em: {new Date().toLocaleTimeString()}
               </div>
             </div>
-
             {fila.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🎉</div>
@@ -211,7 +189,7 @@ export default function Fila() {
                 {fila.map((item, index) => (
                   <div
                     key={item.id}
-                    className="p-6 border rounded-lg hover:shadow-md transition-shadow"
+                    className={`p-6 border rounded-lg hover:shadow-md transition-shadow duration-500 opacity-0 animate-fadeIn ${item.tempoEstourado ? 'animate-pulse border-red-400' : ''}`}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-4">
@@ -227,23 +205,22 @@ export default function Fila() {
                           </p>
                         </div>
                       </div>
-                      
                       <div className="flex items-center space-x-3">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium text-white ${getCorRisco(item.triagem.risco)}`}>
                           {item.triagem.risco?.toUpperCase() || 'Sem Risco'}
                         </span>
                         <div className="text-right">
-                          <div className="text-sm font-medium text-gray-800">
-                            {calcularTempoEspera(item.chamada_em)}
+                          <div className={`text-sm font-medium ${item.minutosEspera > item.tempoMax ? 'text-red-600' : 'text-gray-800'}`}> 
+                            {item.tempoMax - item.minutosEspera > 0
+                              ? `${item.tempoMax - item.minutosEspera} min restantes`
+                              : 'Tempo estourado!'}
                           </div>
                           <div className="text-xs text-gray-500">
-                            desde {new Date(item.chamada_em).toLocaleTimeString()}
+                            desde {toBrasiliaDate(item.chamada_em).toLocaleTimeString('pt-BR')}
                           </div>
                         </div>
                       </div>
                     </div>
-
-                    {/* Dados da Triagem */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                       <div>
                         <span className="font-medium">Pressão:</span> {item.triagem.pressao || 'N/A'}
@@ -260,8 +237,6 @@ export default function Fila() {
               </div>
             )}
           </div>
-
-          {/* Legenda */}
           <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               🎨 Legenda de Cores de Risco

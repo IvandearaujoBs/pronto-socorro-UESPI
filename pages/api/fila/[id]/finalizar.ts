@@ -16,41 +16,31 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
       const filaId = parseInt(req.query.id as string)
       const { diagnostico, prescricao } = req.body
-
-      // Verificar se o item da fila existe e está em atendimento
       const itemFila = db.prepare(`
         SELECT id, paciente_id, status 
         FROM fila 
         WHERE id = ?
       `).get(filaId) as FilaItem | undefined
-
       if (!itemFila) {
         return res.status(404).json({
           error: 'Item da fila não encontrado'
         })
       }
-
       if (itemFila.status !== 'em_atendimento') {
         return res.status(400).json({
           error: 'Paciente não está em atendimento'
         })
       }
-
-      // Atualizar status para 'atendido'
       db.prepare(`
         UPDATE fila 
         SET status = 'atendido' 
         WHERE id = ?
       `).run(filaId)
-
-      // Aqui você poderia salvar diagnóstico e prescrição em uma tabela separada
-      // Por simplicidade, vamos apenas finalizar o atendimento
       console.log('Atendimento finalizado:', {
         pacienteId: itemFila.paciente_id,
         diagnostico,
         prescricao
       })
-
       res.status(200).json({
         message: 'Atendimento finalizado com sucesso'
       })

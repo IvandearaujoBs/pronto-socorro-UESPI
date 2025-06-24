@@ -36,7 +36,6 @@ export default function Triagem() {
 
   const carregarPacientes = async () => {
     try {
-      // Buscar apenas pacientes que ainda não passaram pela triagem
       const response = await fetch('/api/pacientes/sem-triagem')
       console.log('Response status:', response.status)
       if (response.ok) {

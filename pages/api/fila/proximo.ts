@@ -22,7 +22,48 @@ interface FilaItem {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-      // Buscar o próximo paciente da fila (prioridade por risco)
+      // Primeiro, verifica se já existe um paciente em atendimento
+      const pacienteEmAtendimento = db.prepare(`
+        SELECT 
+          f.id,
+          f.status,
+          f.chamada_em,
+          p.id as paciente_id,
+          p.nome,
+          p.cpf,
+          p.nascimento,
+          t.pressao,
+          t.temperatura,
+          t.batimentos,
+          t.risco
+        FROM fila f
+        INNER JOIN pacientes p ON f.paciente_id = p.id
+        INNER JOIN triagem t ON p.id = t.paciente_id
+        WHERE f.status = 'em_atendimento'
+        LIMIT 1
+      `).get() as FilaItem | undefined;
+
+      if (pacienteEmAtendimento) {
+        const pacienteFormatado = {
+          id: pacienteEmAtendimento.id,
+          paciente: {
+            id: pacienteEmAtendimento.paciente_id,
+            nome: pacienteEmAtendimento.nome,
+            cpf: pacienteEmAtendimento.cpf,
+            nascimento: pacienteEmAtendimento.nascimento
+          },
+          triagem: {
+            pressao: pacienteEmAtendimento.pressao,
+            temperatura: pacienteEmAtendimento.temperatura,
+            batimentos: pacienteEmAtendimento.batimentos,
+            risco: pacienteEmAtendimento.risco
+          },
+          status: 'em_atendimento',
+          chamada_em: pacienteEmAtendimento.chamada_em
+        }
+        return res.status(200).json(pacienteFormatado);
+      }
+
       const proximoPaciente = db.prepare(`
         SELECT 
           f.id,
@@ -59,14 +100,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         })
       }
 
-      // Atualizar status para 'em_atendimento'
       db.prepare(`
         UPDATE fila 
         SET status = 'em_atendimento' 
         WHERE id = ?
       `).run(proximoPaciente.id)
 
-      // Formatar resposta
       const pacienteFormatado = {
         id: proximoPaciente.id,
         paciente: {

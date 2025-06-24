@@ -8,7 +8,6 @@ const db = new Database(dbPath)
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      // Buscar pacientes que ainda não passaram pela triagem
       const pacientes = db.prepare(`
         SELECT p.id, p.nome, p.cpf, p.nascimento
         FROM pacientes p
@@ -16,10 +15,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         LEFT JOIN triagem t ON p.id = t.paciente_id
         LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
         WHERE f.status LIKE '%esperando%' AND t.id IS NULL AND h.id IS NULL
-        ORDER BY p.nome
+        ORDER BY p.id
       `).all()
 
-      // Debug: verificar todos os pacientes na fila
       const todosPacientesFila = db.prepare(`
         SELECT p.id, p.nome, f.status, t.id as triagem_id, h.id as remocao_id
         FROM pacientes p

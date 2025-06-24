@@ -6,10 +6,7 @@ console.log('Updating maximum times in database...');
 const dbPath = path.join(__dirname, 'src', 'database', 'db.sqlite');
 const db = new Database(dbPath);
 
-// Limpar tempos existentes
 db.prepare('DELETE FROM tempos_maximos').run();
-
-// Inserir novos tempos
 db.prepare('INSERT INTO tempos_maximos (risco, tempo_minutos) VALUES (?, ?)').run('vermelho', 0);
 db.prepare('INSERT INTO tempos_maximos (risco, tempo_minutos) VALUES (?, ?)').run('laranja', 10);
 db.prepare('INSERT INTO tempos_maximos (risco, tempo_minutos) VALUES (?, ?)').run('amarelo', 60);

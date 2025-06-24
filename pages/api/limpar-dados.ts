@@ -8,19 +8,12 @@ const db = new Database(dbPath)
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-      // Limpar todas as tabelas
       db.prepare('DELETE FROM fila').run()
       db.prepare('DELETE FROM triagem').run()
       db.prepare('DELETE FROM pacientes').run()
       db.prepare('DELETE FROM historico_remocoes').run()
-      
-      // Resetar os auto-increment (corrigido)
       db.prepare('DELETE FROM sqlite_sequence WHERE name IN (?, ?, ?, ?)').run('pacientes', 'triagem', 'fila', 'historico_remocoes')
-
-      // Corrigir pacientes presos em 'em_atendimento'
       db.prepare("UPDATE fila SET status = 'atendido' WHERE status = 'em_atendimento'").run();
-
-      // Remover registros duplicados da fila (manter apenas o mais recente de cada paciente)
       db.prepare(`
         DELETE FROM fila 
         WHERE id NOT IN (
@@ -29,9 +22,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           GROUP BY paciente_id
         )
       `).run();
-
       console.log('Banco de dados limpo com sucesso')
-      
       res.status(200).json({ 
         message: 'Banco de dados limpo com sucesso',
         detalhes: {

@@ -18,6 +18,7 @@ interface PacienteFila {
   }
   status: string
   chamada_em: string
+  data_triagem: string
 }
 
 export default function Medico() {
@@ -32,8 +33,11 @@ export default function Medico() {
 
   useEffect(() => {
     carregarFila()
-    const interval = setInterval(carregarFila, 5000) // Atualiza a cada 5 segundos
-    return () => clearInterval(interval)
+    return () => {
+      if (pacienteAtual && pacienteAtual.status === 'em_atendimento') {
+        fetch(`/api/fila/${pacienteAtual.id}/devolver`, { method: 'PUT' });
+      }
+    };
   }, [])
 
   const carregarFila = async () => {
@@ -99,7 +103,6 @@ export default function Medico() {
 
   const getCorRisco = (risco: string | null) => {
     if (!risco) return 'bg-gray-500'
-    
     const cores = {
       vermelho: 'bg-red-500',
       laranja: 'bg-orange-500',
@@ -113,7 +116,6 @@ export default function Medico() {
 
   const getLabelRisco = (risco: string | null) => {
     if (!risco) return 'Sem Risco'
-    
     const labels = {
       vermelho: 'Vermelho - Emergência',
       laranja: 'Laranja - Muito Urgente',
@@ -125,19 +127,47 @@ export default function Medico() {
     return labels[risco as keyof typeof labels] || risco
   }
 
-  const calcularTempoEspera = (chamadaEm: string) => {
-    const agora = new Date()
-    const chamada = new Date(chamadaEm)
-    const diffMs = agora.getTime() - chamada.getTime()
-    const diffMins = Math.floor(diffMs / 60000)
-    
-    if (diffMins < 60) {
-      return `${diffMins} min`
-    } else {
-      const horas = Math.floor(diffMins / 60)
-      const mins = diffMins % 60
-      return `${horas}h ${mins}min`
+  const getTempoMaximo = (risco: string | null) => {
+    if (!risco) return 0
+    const tempos = {
+      vermelho: 15,
+      laranja: 10,
+      amarelo: 5,
+      verde: 2,
+      azul: 1,
+      'sem-risco': 0
     }
+    return tempos[risco as keyof typeof tempos] || 0
+  }
+
+  // Componente para tempo regressivo
+  function TempoRestante({ dataTriagem, tempoMaximoMinutos }: { dataTriagem: string, tempoMaximoMinutos: number }) {
+    const [restante, setRestante] = useState("");
+    useEffect(() => {
+      function atualizar() {
+        const triagem = new Date(dataTriagem);
+        const limite = new Date(triagem.getTime() + tempoMaximoMinutos * 60000);
+        const agora = new Date();
+        const diff = Math.floor((limite.getTime() - agora.getTime()) / 1000);
+        if (diff <= 0) {
+          setRestante("Tempo esgotado");
+        } else {
+          const minutos = Math.floor(diff / 60);
+          const segundos = diff % 60;
+          setRestante(`Falta ${minutos}m ${segundos < 10 ? "0" : ""}${segundos}s`);
+        }
+      }
+      atualizar();
+      const timer = setInterval(atualizar, 1000);
+      return () => clearInterval(timer);
+    }, [dataTriagem, tempoMaximoMinutos]);
+    const triagemFormatada = new Date(dataTriagem).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return (
+      <div className="text-xs text-gray-500">
+        Triado às {triagemFormatada}<br />
+        <span className={restante === "Tempo esgotado" ? "text-red-600 font-bold" : ""}>{restante}</span>
+      </div>
+    );
   }
 
   return (
@@ -147,16 +177,13 @@ export default function Medico() {
       </Head>
       <main className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
         <div className="container mx-auto px-4 py-8">
-          {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <Link href="/" className="text-green-600 hover:text-green-800">
               ← Voltar ao Menu Principal
             </Link>
             <h1 className="text-3xl font-bold text-gray-800">👨‍⚕️ Área Médica</h1>
           </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Fila de Espera */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-800">
@@ -170,14 +197,13 @@ export default function Medico() {
                   Chamar Próximo
                 </button>
               </div>
-
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {fila.length === 0 ? (
+                {fila.filter(item => item.status !== 'em_atendimento').length === 0 ? (
                   <p className="text-gray-500 text-center py-4">
                     Nenhum paciente na fila
                   </p>
                 ) : (
-                  fila.map((item, index) => (
+                  fila.filter(item => item.status !== 'em_atendimento').map((item, index) => (
                     <div
                       key={item.id}
                       className="p-4 border rounded-lg bg-gray-50"
@@ -198,6 +224,7 @@ export default function Medico() {
                       <div className="text-sm text-gray-600">
                         CPF: {item.paciente.cpf}
                       </div>
+                      <TempoRestante dataTriagem={item.data_triagem} tempoMaximoMinutos={getTempoMaximo(item.triagem.risco)} />
                       <div className="text-xs text-gray-500 mt-1">
                         Aguardando desde: {new Date(item.chamada_em).toLocaleTimeString()}
                       </div>
@@ -217,16 +244,12 @@ export default function Medico() {
                 )}
               </div>
             </div>
-
-            {/* Área de Atendimento */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Atendimento Atual
               </h2>
-
               {pacienteAtual ? (
                 <div className="space-y-4">
-                  {/* Informações do Paciente */}
                   <div className="p-4 bg-green-50 rounded-lg">
                     <h3 className="font-semibold text-green-800 mb-2">
                       Paciente: {pacienteAtual.paciente.nome}
@@ -242,8 +265,6 @@ export default function Medico() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Dados da Triagem */}
                   <div className="p-4 bg-blue-50 rounded-lg">
                     <h4 className="font-semibold text-blue-800 mb-2">Dados da Triagem</h4>
                     <div className="grid grid-cols-3 gap-4 text-sm text-blue-700">
@@ -258,8 +279,6 @@ export default function Medico() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Formulário de Atendimento */}
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -273,7 +292,6 @@ export default function Medico() {
                         placeholder="Descreva o diagnóstico..."
                       />
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Prescrição
@@ -286,7 +304,6 @@ export default function Medico() {
                         placeholder="Descreva a prescrição..."
                       />
                     </div>
-
                     <button
                       onClick={finalizarAtendimento}
                       className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors"
@@ -302,13 +319,11 @@ export default function Medico() {
                   <p className="text-sm">Clique em "Chamar Próximo" para iniciar um atendimento</p>
                 </div>
               )}
-
-              {/* Mensagem */}
               {mensagem && (
-                <div className={`mt-4 p-4 rounded-lg ${
+                <div className={`mt-4 p-4 rounded-lg transition-all duration-700 transform ${
                   mensagem.includes('successfully') 
-                    ? 'bg-green-100 text-green-800 border border-green-200' 
-                    : 'bg-red-100 text-red-800 border border-red-200'
+                    ? 'bg-green-100 text-green-800 border border-green-200 animate-fadeIn' 
+                    : 'bg-red-100 text-red-800 border border-red-200 animate-fadeIn'
                 }`}>
                   {mensagem}
                 </div>
@@ -316,8 +331,6 @@ export default function Medico() {
             </div>
           </div>
         </div>
-
-        {/* Modal de motivo da remoção */}
         {modalRemover && (
           <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">

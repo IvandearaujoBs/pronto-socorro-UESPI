@@ -1,16 +1,17 @@
-# 🏥 Sistema de Fila - Pronto Socorro
+# 🏥 ClinicFlow - Sistema de Fila para Pronto Socorro
 
-Sistema de gerenciamento de fila para pronto socorro com interface web moderna.
+Sistema web completo para gerenciamento de fila de pronto socorro, com priorização por risco, cadastro de pacientes, triagem, atendimento médico e painel de monitoramento.
 
-## 🚀 Funcionalidades
+## �� Funcionalidades
 
-- **Recepção**: Cadastro de pacientes
-- **Triagem**: Avaliação de risco com sistema de cores
-- **Médico**: Atendimento e finalização de consultas
-- **Fila**: Visualização em tempo real da fila de espera
-- **Priorização**: Sistema automático de priorização por risco
-- **Sistema de Tempos**: Monitoramento de tempos máximos por nível de risco
-- **Debug**: Página de monitoramento e estatísticas em tempo real
+- Recepção: Cadastro de pacientes
+- Triagem: Avaliação de risco com sistema de cores
+- Médico: Atendimento e finalização de consultas
+- Fila: Visualização em tempo real da fila de espera
+- Priorização: Sistema automático de priorização por risco
+- Sistema de Tempos: Monitoramento de tempos máximos por nível de risco
+- Remoção de Pacientes: Com motivo obrigatório e histórico
+- Debug: Página de monitoramento e estatísticas em tempo real
 
 ## 🎨 Interface
 
@@ -24,9 +25,10 @@ Interface moderna e responsiva com:
 ## 🛠️ Tecnologias
 
 - **Frontend**: Next.js, React, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes
-- **Banco de Dados**: SQLite com better-sqlite3
+- **Backend**: Next.js API Routes, TypeScript
+- **Banco de Dados**: SQLite (better-sqlite3)
 - **Estilização**: Tailwind CSS
+- **Outros**: ngrok (acesso remoto temporário), scripts de seed e limpeza
 
 ## 📦 Instalação e Configuração
 
@@ -123,6 +125,11 @@ Para acessar de outros computadores na rede:
 2. Acesse: `http://[IP_DA_REDE]:3000`
 3. Exemplo: `http://192.168.1.100:3000`
 
+Para acesso externo, utilize ferramentas como **ngrok**:
+```bash
+ngrok http 3000
+```
+
 ### 📋 Comandos Úteis
 
 ```bash
@@ -131,12 +138,11 @@ npm run dev          # Inicia servidor de desenvolvimento
 npm run build        # Gera versão de produção
 npm run start:next   # Inicia servidor de produção
 
-# Sistema CLI original
-npm start            # Executa versão terminal do sistema
+# Instalar dependências
+npm install
 
-# Limpeza
-rm -rf .next         # Limpa cache do Next.js
-rm -rf node_modules  # Remove dependências
+# Executar seed (opcional)
+node src/seed.ts
 ```
 
 ## 📊 Estrutura do Banco
@@ -146,6 +152,7 @@ rm -rf node_modules  # Remove dependências
 - **fila**: Status e controle da fila
 - **users**: Usuários do sistema
 - **tempos_maximos**: Configuração de tempos por nível de risco
+- **remocoes**: Histórico de remoções de pacientes
 
 ## 🔧 Desenvolvimento
 
@@ -154,13 +161,12 @@ rm -rf node_modules  # Remove dependências
 - `npm run dev`: Inicia o servidor de desenvolvimento
 - `npm run build`: Gera build de produção
 - `npm run start:next`: Inicia o servidor de produção
-- `npm start`: Executa o sistema CLI original
 
 ### Estrutura de Arquivos
 
 ```
 ├── pages/                 # Páginas Next.js
-│   ├── api/              # APIs do backend
+│   ├── api/              # APIs do backend (endpoints)
 │   ├── index.tsx         # Página principal
 │   ├── recepcao.tsx      # Módulo de recepção
 │   ├── triagem.tsx       # Módulo de triagem
@@ -183,4 +189,58 @@ rm -rf node_modules  # Remove dependências
 
 ## 📝 Licença
 
-Este projeto está sob a licença ISC. 
+Este projeto está sob a licença ISC.
+
+## 🧩 O que é um Endpoint?
+
+Um **endpoint** é um endereço específico de uma API que permite a comunicação entre o frontend (interface do usuário) e o backend (servidor). Ele serve para cadastrar, buscar, atualizar ou remover dados do sistema via requisições HTTP (GET, POST, PUT, DELETE).
+
+**Exemplo:**
+- `/api/pacientes` — Cadastrar ou listar pacientes
+- `/api/triagem` — Registrar triagem
+- `/api/fila` — Gerenciar a fila de atendimento
+
+O frontend envia requisições para esses endpoints para interagir com o banco de dados e a lógica do sistema.
+
+## 🛠️ Como Funciona o Sistema
+
+### 1. Banco de Dados
+- **SQLite** local, persistido em disco.
+- Tabelas principais: pacientes, triagem, fila, tempos_maximos, remocoes.
+- Script `seed.ts` para cadastrar pacientes de exemplo (opcional).
+
+### 2. Backend (API)
+- Implementado com Next.js API Routes (TypeScript).
+- Endpoints para cadastro, triagem, fila, atendimento, remoção e debug.
+- Lógica de negócio: pacientes só entram na fila após triagem; risco vermelho não entra na fila; remoção exige motivo.
+
+### 3. Frontend
+- Next.js + React + TypeScript + Tailwind CSS.
+- Páginas: inicial, recepção, triagem, médico, fila, debug.
+- Componentes: formulários, listas, modal de remoção, faixa de logo.
+- Atualização automática dos dados via fetch.
+
+### 4. Fluxo do Paciente
+1. **Cadastro:** Recepção registra paciente.
+2. **Triagem:** Profissional avalia sinais vitais e define risco.
+3. **Fila:** Pacientes aguardam conforme prioridade (exceto vermelho).
+4. **Atendimento:** Médico chama, atende e finaliza.
+5. **Remoção:** Paciente pode ser removido com motivo.
+6. **Monitoramento:** Debug mostra estatísticas e permite limpeza do banco.
+
+## ⚠️ Observações Importantes
+
+- O sistema é totalmente funcional localmente.
+- Em ambientes gratuitos/temporários, o banco pode ser resetado.
+- Para produção, recomenda-se migrar para um banco externo (Postgres, MySQL, etc).
+- O painel de debug é uma ferramenta poderosa para monitoramento e testes.
+
+## 📞 Suporte
+
+Se encontrar problemas:
+- Verifique se o Node.js está instalado corretamente
+- Certifique-se de estar na pasta correta do projeto
+- Execute `npm install` novamente
+- Reinicie o terminal e tente novamente
+
+**ClinicFlow — Sistema de Fila para Pronto Socorro** 
