@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import TempoRestante from '../src/TempoRestante'
 
 const temposMaximos: Record<string, number> = {
   vermelho: 0,
@@ -22,35 +23,6 @@ interface PacienteFila {
 interface FilaApiResponse {
   esperando: PacienteFila[]
   em_atendimento: PacienteFila[]
-}
-
-function TempoRestante({ dataTriagem, risco, onTempoEsgotado }: { dataTriagem: string, risco: string, onTempoEsgotado?: (esgotado: boolean) => void }) {
-  const [restante, setRestante] = useState('');
-  const [esgotado, setEsgotado] = useState(false);
-
-  useEffect(() => {
-    function atualizar() {
-      const tempoMax = temposMaximos[risco] || 0;
-      const triagem = new Date(dataTriagem);
-      const agora = new Date();
-      const diff = Math.floor((agora.getTime() - triagem.getTime()) / 60000); // minutos passados
-      const faltam = tempoMax - diff;
-      if (faltam <= 0) {
-        setRestante('Tempo esgotado');
-        setEsgotado(true);
-        if (onTempoEsgotado) onTempoEsgotado(true);
-      } else {
-        setRestante(`Faltam ${faltam} min`);
-        setEsgotado(false);
-        if (onTempoEsgotado) onTempoEsgotado(false);
-      }
-    }
-    atualizar();
-    const timer = setInterval(atualizar, 10000); // atualiza a cada 10s
-    return () => clearInterval(timer);
-  }, [dataTriagem, risco]);
-
-  return <span className={esgotado ? 'text-red-600 font-bold' : ''}>{restante}</span>;
 }
 
 export default function Fila() {
@@ -134,15 +106,18 @@ export default function Fila() {
             {emAtendimento.length === 0 ? (
               <div className="text-center text-gray-600">Nenhum paciente está sendo atendido no momento.</div>
             ) : (
-              <ul className="space-y-2">
-                {emAtendimento.map((item) => (
-                  <li key={item.id} className="flex items-center space-x-4 p-3 border rounded-lg">
-                    <span className={`w-4 h-4 rounded-full inline-block ${getCorRisco(item.risco)}`}></span>
-                    <span className="font-semibold text-gray-800">{item.nome}</span>
-                    <span className="text-sm text-gray-600">({getLabelRisco(item.risco)})</span>
-                  </li>
-                ))}
-              </ul>
+              <>
+                <div className="text-gray-700 font-medium mb-2">Paciente em atendimento:</div>
+                <ul className="space-y-2">
+                  {emAtendimento.map((item) => (
+                    <li key={item.id} className="flex items-center space-x-4 p-3 border rounded-lg">
+                      <span className={`w-4 h-4 rounded-full inline-block ${getCorRisco(item.risco)}`}></span>
+                      <span className="font-semibold text-gray-800">{item.nome}</span>
+                      <span className="text-sm text-gray-600">({getLabelRisco(item.risco)})</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
             )}
           </div>
 
@@ -162,11 +137,7 @@ export default function Fila() {
                     <span className="font-semibold text-gray-800">{item.nome}</span>
                     <span className="text-sm text-gray-600">({getLabelRisco(item.risco)})</span>
                     {item.data_triagem && (
-                      <TempoRestante
-                        dataTriagem={item.data_triagem}
-                        risco={item.risco}
-                        onTempoEsgotado={esgotado => setTempoEsgotado(prev => ({ ...prev, [item.id]: esgotado }))}
-                      />
+                      <TempoRestante dataTriagem={item.data_triagem} risco={item.risco} />
                     )}
                     {tempoEsgotado[item.id] && (
                       <button

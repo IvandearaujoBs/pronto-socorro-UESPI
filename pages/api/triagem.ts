@@ -21,11 +21,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         VALUES (?, ?, ?, ?, ?, ?)
       `).run(pacienteId, pressao || null, temperatura || null, batimentos || null, risco, new Date().toISOString())
 
-      db.prepare(`
-        UPDATE fila 
-        SET status = 'triagem_concluida' 
-        WHERE paciente_id = ?
-      `).run(pacienteId)
+      if (risco === 'vermelho') {
+        db.prepare(`
+          UPDATE fila 
+          SET status = 'atendido' 
+          WHERE paciente_id = ?
+        `).run(pacienteId)
+      } else {
+        db.prepare(`
+          UPDATE fila 
+          SET status = 'triagem_concluida' 
+          WHERE paciente_id = ?
+        `).run(pacienteId)
+      }
 
       res.status(201).json({ message: 'Triagem realizada com sucesso' })
     } catch (error) {

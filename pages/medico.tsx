@@ -82,7 +82,7 @@ export default function Medico() {
       })
 
       if (response.ok) {
-        setMensagem('Appointment completed successfully!')
+        setMensagem('Paciente atendido com sucesso!')
         setPacienteAtual(null)
         setDiagnostico('')
         setPrescricao('')

@@ -169,7 +169,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         nome: item.nome,
         risco: item.risco || 'sem-risco',
         status: item.status,
-        data_triagem: item.data_triagem
+        data_triagem: item.data_triagem || ''
       }))
 
       // Buscar pacientes em atendimento
