@@ -18,7 +18,7 @@ export default function Home() {
 
   useEffect(() => {
     carregarEstatisticas()
-    const interval = setInterval(carregarEstatisticas, 5000) // Atualizar a cada 5 segundos AQUI
+    const interval = setInterval(carregarEstatisticas, 10000) // Atualizar a cada 10 segundos para melhorar performance
     return () => clearInterval(interval)
   }, [])
 

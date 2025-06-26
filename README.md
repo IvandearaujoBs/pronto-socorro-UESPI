@@ -178,6 +178,34 @@ node src/seed.ts
 └── public/               # Arquivos estáticos
 ```
 
+## 📚 Documentação do Código
+
+A documentação técnica do código (gerada automaticamente) pode ser criada com o Typedoc.
+
+### Como gerar a documentação
+
+1. Instale o Typedoc (apenas uma vez):
+   ```bash
+   npm install --save-dev typedoc
+   ```
+2. Gere a documentação:
+   ```bash
+   npx typedoc --out docs src
+   ```
+
+A documentação será criada na pasta `docs/`. Abra o arquivo `docs/index.html` no seu navegador para visualizar.
+
+### Documentação da Arquitetura
+
+Para entender a arquitetura completa do sistema, consulte o arquivo [ARQUITETURA.md](./ARQUITETURA.md) que contém:
+
+- Visão geral da arquitetura
+- Padrões de design utilizados
+- Fluxo de dados
+- Modelo de dados
+- Tecnologias e ferramentas
+- Considerações de segurança e performance
+
 ## 🎯 Próximas Melhorias
 
 - [ ] Autenticação de usuários

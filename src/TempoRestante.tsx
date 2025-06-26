@@ -10,18 +10,27 @@ const TempoRestante: React.FC<TempoRestanteProps> = ({ dataTriagem }) => {
 
   useEffect(() => {
     const atualizarTempo = () => {
-      const inicio = new Date(dataTriagem).getTime();
-      const agora = Date.now();
-      const diff = agora - inicio;
-      const minutos = Math.floor(diff / 60000);
-      const segundos = Math.floor((diff % 60000) / 1000);
-      setTempo(`${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`);
+      try {
+        const inicio = new Date(dataTriagem).getTime();
+        if (isNaN(inicio)) {
+          setTempo('');
+          return;
+        }
+        const agora = Date.now();
+        const diff = agora - inicio;
+        const minutos = Math.floor(diff / 60000);
+        const segundos = Math.floor((diff % 60000) / 1000);
+        setTempo(`${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`);
+      } catch (error) {
+        setTempo('');
+      }
     };
     atualizarTempo();
-    const interval = setInterval(atualizarTempo, 1000);
+    const interval = setInterval(atualizarTempo, 5000);
     return () => clearInterval(interval);
   }, [dataTriagem]);
 
+  if (!tempo) return null;
   return <span className="ml-2 text-xs text-gray-500">⏱️ {tempo}</span>;
 };
 

@@ -17,7 +17,7 @@ interface PacienteFila {
   nome: string
   risco: string
   status: string
-  data_triagem?: string // Adicionado para contagem regressiva
+  data_triagem?: string | null // Adicionado para contagem regressiva
 }
 
 interface FilaApiResponse {
@@ -32,7 +32,7 @@ export default function Fila() {
 
   useEffect(() => {
     carregarFila()
-    const interval = setInterval(carregarFila, 3000)
+    const interval = setInterval(carregarFila, 5000)
     return () => clearInterval(interval)
   }, [])
 
@@ -50,10 +50,6 @@ export default function Fila() {
   }
 
   const chamarPaciente = async (id: number) => {
-    // Aqui você pode implementar a chamada do paciente, por exemplo, via API
-    // ou redirecionar para a tela do médico
-    // Exemplo: window.location.href = '/medico';
-    // Ou chamar a API de chamar próximo, se necessário
     alert(`Paciente ${id} chamado!`)
   }
 
@@ -136,7 +132,7 @@ export default function Fila() {
                     <span className={`w-4 h-4 rounded-full inline-block ${getCorRisco(item.risco)}`}></span>
                     <span className="font-semibold text-gray-800">{item.nome}</span>
                     <span className="text-sm text-gray-600">({getLabelRisco(item.risco)})</span>
-                    {item.data_triagem && (
+                    {item.data_triagem && item.data_triagem !== '' && (
                       <TempoRestante dataTriagem={item.data_triagem} risco={item.risco} />
                     )}
                     {tempoEsgotado[item.id] && (

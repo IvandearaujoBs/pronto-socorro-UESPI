@@ -278,11 +278,15 @@ export default function Medico() {
                   className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-red-300"
                   disabled={!motivoRemocao.trim()}
                   onClick={async () => {
-                    await fetch(`/api/pacientes/${modalRemover.id}/remover`, {
+                    const response = await fetch(`/api/pacientes/${modalRemover.id}/remover`, {
                       method: 'DELETE',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ motivo: motivoRemocao })
                     });
+                    if (response.ok) {
+                      setMensagem('Paciente removido');
+                      setTimeout(() => setMensagem(''), 3000); // Limpar mensagem após 3 segundos
+                    }
                     setModalRemover(null);
                     setMotivoRemocao('');
                     carregarFila();
