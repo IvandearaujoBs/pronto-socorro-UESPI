@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 interface TempoRestanteProps {
-  dataTriagem: string; // Ex: "2024-06-07T14:30:00.000Z"
+  dataTriagem: string; 
   risco: string;
 }
 

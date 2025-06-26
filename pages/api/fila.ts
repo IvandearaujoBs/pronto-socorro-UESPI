@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import Database from 'better-sqlite3'
 import path from 'path'
 import { temposMaximos } from '../../src/constantes/temposMaximos'
+import { MinHeap, HeapItem } from '../../src/MinHeap'
 
 const dbPath = path.join(process.cwd(), 'src', 'database', 'db.sqlite')
 const db = new Database(dbPath)
@@ -49,17 +50,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         INNER JOIN triagem t ON p.id = t.paciente_id
         LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
         WHERE h.id IS NULL
-        ORDER BY 
-          CASE t.risco
-            WHEN 'vermelho' THEN 1
-            WHEN 'laranja' THEN 2
-            WHEN 'amarelo' THEN 3
-            WHEN 'verde' THEN 4
-            WHEN 'azul' THEN 5
-            ELSE 6
-          END,
-          t.data ASC,
-          f.id ASC
       `).all() as FilaItem[]
 
       const agora = new Date();
@@ -93,7 +83,32 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         item.status === 'em_atendimento'
       );
 
-      const esperandoFormatado = esperando.map((item: FilaItem) => ({
+      class PacienteHeapItem implements HeapItem {
+        prioridade: number;
+        item: typeof filaComTempo[0];
+        constructor(item: typeof filaComTempo[0]) {
+
+          let riscoNum = 6;
+          switch (item.risco) {
+            case 'vermelho': riscoNum = 1; break;
+            case 'laranja': riscoNum = 2; break;
+            case 'amarelo': riscoNum = 3; break;
+            case 'verde': riscoNum = 4; break;
+            case 'azul': riscoNum = 5; break;
+            default: riscoNum = 6;
+          }
+          this.prioridade = riscoNum * 10000 + (item.minutosEspera || 0) * 10 + (item.id || 0);
+          this.item = item;
+        }
+      }
+      const heap = new MinHeap<PacienteHeapItem>();
+      esperando.forEach(item => heap.insert(new PacienteHeapItem(item)));
+      const esperandoOrdenado: FilaItem[] = [];
+      while (!heap.isEmpty()) {
+        const heapItem = heap.extractMin();
+        if (heapItem) esperandoOrdenado.push(heapItem.item);
+      }
+      const esperandoFormatado = esperandoOrdenado.map((item: FilaItem) => ({
         id: item.id,
         nome: item.nome,
         risco: item.risco || 'sem-risco',
