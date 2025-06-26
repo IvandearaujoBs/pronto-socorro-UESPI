@@ -22,17 +22,14 @@ interface FilaItem {
 }
 
 function toBrasiliaDate(dateString: string) {
-  // Converte a string do banco (geralmente UTC) para Date no fuso de Brasília (UTC-3)
   const utcDate = new Date(dateString);
-  // Ajusta para UTC-3
-  const brasiliaOffset = -3 * 60; // minutos
+  const brasiliaOffset = -3 * 60; 
   return new Date(utcDate.getTime() + brasiliaOffset * 60000);
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      // Consulta única otimizada para buscar todos os dados necessários
       const filaCompleta = db.prepare(`
         SELECT 
           f.id,
@@ -68,7 +65,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       const agora = new Date();
       const agoraBrasilia = new Date(agora.getTime() + (-3 * 60 * 60000));
       
-      // Processar dados uma única vez
+
       const filaComTempo = filaCompleta.map(item => {
         let tempoMax = 99999;
         if (item.risco && temposMaximos[item.risco as keyof typeof temposMaximos] !== undefined) {
@@ -88,7 +85,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         }
       });
 
-      // Separar por status
       const esperando = filaComTempo.filter(item => 
         item.status === 'esperando' || item.status === 'triagem_concluida'
       );
@@ -97,7 +93,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         item.status === 'em_atendimento'
       );
 
-      // Formatar dados de saída
       const esperandoFormatado = esperando.map((item: FilaItem) => ({
         id: item.id,
         nome: item.nome,

@@ -22,7 +22,6 @@ interface FilaItem {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-      // Primeiro, verifica se já existe um paciente em atendimento
       const pacienteEmAtendimento = db.prepare(`
         SELECT 
           f.id,

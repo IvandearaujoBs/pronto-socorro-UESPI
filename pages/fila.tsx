@@ -17,7 +17,7 @@ interface PacienteFila {
   nome: string
   risco: string
   status: string
-  data_triagem?: string | null // Adicionado para contagem regressiva
+  data_triagem?: string | null 
 }
 
 interface FilaApiResponse {
@@ -32,7 +32,7 @@ export default function Fila() {
 
   useEffect(() => {
     carregarFila()
-    const interval = setInterval(carregarFila, 5000)
+    const interval = setInterval(carregarFila, 10000)
     return () => clearInterval(interval)
   }, [])
 

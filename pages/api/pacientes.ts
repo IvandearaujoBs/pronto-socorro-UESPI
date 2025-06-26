@@ -27,7 +27,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ error: 'Nome e CPF são obrigatórios' })
       }
 
-      // Verificar se CPF já existe
       const pacienteExistente = db.prepare(
         'SELECT id FROM pacientes WHERE cpf = ?'
       ).get(cpf)
@@ -36,13 +35,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(409).json({ error: 'CPF já cadastrado' })
       }
 
-      // Inserir novo paciente AQUI
       const result = db.prepare(`
         INSERT INTO pacientes (nome, cpf, nascimento) 
         VALUES (?, ?, ?)
       `).run(nome, cpf, nascimento || null)
 
-      // Adicionar à fila automaticamente
       db.prepare(`
         INSERT INTO fila (paciente_id, status, chamada_em) 
         VALUES (?, 'esperando', CURRENT_TIMESTAMP)

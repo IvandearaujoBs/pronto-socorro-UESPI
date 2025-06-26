@@ -26,7 +26,7 @@ const TempoRestante: React.FC<TempoRestanteProps> = ({ dataTriagem }) => {
       }
     };
     atualizarTempo();
-    const interval = setInterval(atualizarTempo, 5000);
+    const interval = setInterval(atualizarTempo, 10000);
     return () => clearInterval(interval);
   }, [dataTriagem]);
 
