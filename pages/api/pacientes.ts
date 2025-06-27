@@ -9,7 +9,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
       const pacientes = db.prepare(`
-        SELECT id, nome, cpf, nascimento 
+        SELECT id, nome, cpf, nascimento, sexo, sus 
         FROM pacientes 
         ORDER BY nome
       `).all()
@@ -21,10 +21,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
   } else if (req.method === 'POST') {
     try {
-      const { nome, cpf, nascimento } = req.body
+      const { nome, cpf, nascimento, sexo, sus } = req.body
 
-      if (!nome || !cpf) {
-        return res.status(400).json({ error: 'Nome e CPF são obrigatórios' })
+      if (!nome || !cpf || !sexo) {
+        return res.status(400).json({ error: 'Nome, CPF e sexo são obrigatórios' })
       }
 
       const pacienteExistente = db.prepare(
@@ -36,9 +36,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       }
 
       const result = db.prepare(`
-        INSERT INTO pacientes (nome, cpf, nascimento) 
-        VALUES (?, ?, ?)
-      `).run(nome, cpf, nascimento || null)
+        INSERT INTO pacientes (nome, cpf, nascimento, sexo, sus) 
+        VALUES (?, ?, ?, ?, ?)
+      `).run(nome, cpf, nascimento || null, sexo, sus || null)
 
       db.prepare(`
         INSERT INTO fila (paciente_id, status, chamada_em) 
