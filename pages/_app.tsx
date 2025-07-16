@@ -1,5 +1,4 @@
 import React from 'react'
-<<<<<<< HEAD
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import '../styles/globals.css'
@@ -40,11 +39,4 @@ function MyApp({ Component, pageProps }) {
 } 
 
 export default MyApp 
-=======
-import type { AppProps } from 'next/app'
-import '../styles/globals.css'
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
-} 
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
