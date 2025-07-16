@@ -8,18 +8,32 @@ const db = new Database(dbPath)
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
+<<<<<<< HEAD
       const { pacienteId, filaId, pressao, temperatura, batimentos, risco } = req.body
 
       if (!pacienteId || !filaId || !risco) {
         return res.status(400).json({
           error: 'ID do paciente, fila e nível de risco são obrigatórios'
+=======
+      const { pacienteId, pressao, temperatura, batimentos, risco } = req.body
+
+      if (!pacienteId || !risco) {
+        return res.status(400).json({
+          error: 'ID do paciente e nível de risco são obrigatórios'
+>>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
         })
       }
 
       db.prepare(`
+<<<<<<< HEAD
         INSERT INTO triagem (paciente_id, fila_id, pressao, temperatura, batimentos, risco, data) 
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `).run(pacienteId, filaId, pressao || null, temperatura || null, batimentos || null, risco, new Date().toISOString())
+=======
+        INSERT INTO triagem (paciente_id, pressao, temperatura, batimentos, risco, data) 
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).run(pacienteId, pressao || null, temperatura || null, batimentos || null, risco, new Date().toISOString())
+>>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
       db.prepare(`
         UPDATE fila 

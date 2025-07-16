@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
+<<<<<<< HEAD
 import { useRouter } from 'next/router'
+=======
+>>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
 interface Estatisticas {
   resumo: {
@@ -14,6 +17,7 @@ interface Estatisticas {
 }
 
 export default function Home() {
+<<<<<<< HEAD
   const router = useRouter();
   const [estatisticas, setEstatisticas] = useState<Estatisticas | null>(null)
   const [loading, setLoading] = useState(true)
@@ -40,6 +44,16 @@ export default function Home() {
   if (!isAuthChecked) {
     return null;
   }
+=======
+  const [estatisticas, setEstatisticas] = useState<Estatisticas | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    carregarEstatisticas()
+    const interval = setInterval(carregarEstatisticas, 5000) // Atualizar a cada 5 segundos AQUI
+    return () => clearInterval(interval)
+  }, [])
+>>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
   const carregarEstatisticas = async () => {
     try {

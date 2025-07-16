@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+<<<<<<< HEAD
 import { useRouter } from 'next/router'
+=======
+>>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
 interface PacienteFila {
   id: number
@@ -25,7 +28,10 @@ interface PacienteFila {
 }
 
 export default function Fila() {
+<<<<<<< HEAD
   const router = useRouter()
+=======
+>>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
   const [fila, setFila] = useState<PacienteFila[]>([])
   const [estatisticas, setEstatisticas] = useState({
     total: 0,
@@ -128,6 +134,7 @@ export default function Fila() {
         <title>Fila de Atendimento - ClinicFlow</title>
         <meta name="description" content="Fila de espera em tempo real" />
       </Head>
+<<<<<<< HEAD
       <main className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-8">
@@ -136,6 +143,15 @@ export default function Fila() {
             </Link>
             <h1 className="text-3xl font-bold text-gray-800">📋 Fila</h1>
             <button onClick={() => { localStorage.removeItem('user'); router.push('/login'); }} className="ml-4 bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition-colors duration-200 font-semibold">Sair</button>
+=======
+      <main className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-8">
+            <Link href="/" className="text-purple-600 hover:text-purple-800">
+              ← Voltar ao Menu Principal
+            </Link>
+            <h1 className="text-3xl font-bold text-gray-800">📋 Fila de Atendimento</h1>
+>>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
           </div>
           <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
@@ -188,11 +204,19 @@ export default function Fila() {
                 </p>
               </div>
             ) : (
+<<<<<<< HEAD
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {fila.map((item, index) => (
                   <div
                     key={item.id}
                     className="p-3 border rounded-lg cursor-pointer transition-all duration-500 ease-in-out transform hover:scale-105 hover:shadow-lg bg-white animate-fadeIn"
+=======
+              <div className="space-y-4">
+                {fila.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className={`p-6 border rounded-lg hover:shadow-md transition-shadow duration-500 opacity-0 animate-fadeIn ${item.tempoEstourado ? 'animate-pulse border-red-400' : ''}`}
+>>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-4">

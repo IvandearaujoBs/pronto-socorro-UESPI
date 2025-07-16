@@ -27,6 +27,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ error: 'Nome e CPF são obrigatórios' })
       }
 
+<<<<<<< HEAD
       // Validação de CPF
       function isCpfValido(cpf) {
         cpf = cpf.replace(/\D/g, '')
@@ -68,6 +69,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           message: 'Paciente já cadastrado. Reutilizado e adicionado à fila.',
           id: pacienteExistente.id
         })
+=======
+      // Verificar se CPF já existe
+      const pacienteExistente = db.prepare(
+        'SELECT id FROM pacientes WHERE cpf = ?'
+      ).get(cpf)
+
+      if (pacienteExistente) {
+        return res.status(409).json({ error: 'CPF já cadastrado' })
+>>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
       }
 
       // Inserir novo paciente AQUI
