@@ -1,20 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-<<<<<<< HEAD
 import { useRouter } from 'next/router'
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
 interface Paciente {
   id: number
   nome: string
   cpf: string
   nascimento: string
-<<<<<<< HEAD
   fila_id?: number
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 }
 
 interface Triagem {
@@ -25,10 +19,7 @@ interface Triagem {
 }
 
 export default function Triagem() {
-<<<<<<< HEAD
   const router = useRouter()
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
   const [pacientes, setPacientes] = useState<Paciente[]>([])
   const [pacienteSelecionado, setPacienteSelecionado] = useState<Paciente | null>(null)
   const [triagem, setTriagem] = useState<Triagem>({
@@ -38,17 +29,11 @@ export default function Triagem() {
     risco: ''
   })
   const [mensagem, setMensagem] = useState('')
-<<<<<<< HEAD
   const [mensagemAcao, setMensagemAcao] = useState('')
   const [modalRemover, setModalRemover] = useState<{id: number, nome: string} | null>(null)
   const [motivoRemocao, setMotivoRemocao] = useState('')
   const motivoRef = useRef<HTMLTextAreaElement>(null)
   const [mensagemSucesso, setMensagemSucesso] = useState('')
-=======
-  const [modalRemover, setModalRemover] = useState<{id: number, nome: string} | null>(null)
-  const [motivoRemocao, setMotivoRemocao] = useState('')
-  const motivoRef = useRef<HTMLTextAreaElement>(null)
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
   useEffect(() => {
     carregarPacientes()
@@ -74,12 +59,8 @@ export default function Triagem() {
     e.preventDefault()
     
     if (!pacienteSelecionado) {
-<<<<<<< HEAD
       setMensagem('Selecione um paciente primeiro')
       setTimeout(() => setMensagem(''), 3000)
-=======
-      setMensagem('Select a patient first')
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
       return
     }
 
@@ -91,39 +72,25 @@ export default function Triagem() {
         },
         body: JSON.stringify({
           pacienteId: pacienteSelecionado.id,
-<<<<<<< HEAD
           filaId: pacienteSelecionado.fila_id,
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
           ...triagem
         }),
       })
 
       if (response.ok) {
-<<<<<<< HEAD
         setMensagemSucesso('Triagem realizada com sucesso!')
         setTimeout(() => setMensagemSucesso(''), 3000)
-=======
-        setMensagem('Triage completed successfully!')
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
         setTriagem({ pressao: '', temperatura: '', batimentos: '', risco: '' })
         setPacienteSelecionado(null)
         carregarPacientes()
       } else {
         const error = await response.json()
-<<<<<<< HEAD
         setMensagem(error.error || 'Erro ao realizar triagem')
         setTimeout(() => setMensagem(''), 3000)
       }
     } catch (error) {
       setMensagem('Erro ao realizar triagem')
       setTimeout(() => setMensagem(''), 3000)
-=======
-        setMensagem(`Error: ${error.message}`)
-      }
-    } catch (error) {
-      setMensagem('Error performing triage')
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
     }
   }
 
@@ -157,7 +124,9 @@ export default function Triagem() {
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
-<<<<<<< HEAD
+            <Link href="/" className="text-orange-600 hover:text-orange-800">
+              ← Voltar ao Menu Principal
+            </Link>
             <h1 className="text-3xl font-bold text-gray-800">🏥 Triagem</h1>
             <button onClick={() => { localStorage.removeItem('user'); router.push('/login'); }} className="ml-4 bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition-colors duration-200 font-semibold">Sair</button>
           </div>
@@ -198,21 +167,6 @@ export default function Triagem() {
                   Próximo
                 </button>
               </div>
-=======
-            <Link href="/" className="text-orange-600 hover:text-orange-800">
-              ← Voltar ao Menu Principal
-            </Link>
-            <h1 className="text-3xl font-bold text-gray-800">🏥 Triagem</h1>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Lista de Pacientes */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Pacientes Aguardando Triagem ({pacientes.length})
-              </h2>
-
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {pacientes.length === 0 ? (
                   <p className="text-gray-500 text-center py-4">
@@ -222,16 +176,12 @@ export default function Triagem() {
                   pacientes.map((paciente, index) => (
                     <div
                       key={paciente.id}
-<<<<<<< HEAD
-                      className={`p-3 border rounded-lg bg-white ${pacienteSelecionado?.id === paciente.id ? 'border-orange-500 bg-orange-50' : 'border-gray-200'}`}
-=======
                       onClick={() => setPacienteSelecionado(paciente)}
                       className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                         pacienteSelecionado?.id === paciente.id
                           ? 'border-orange-500 bg-orange-50'
                           : 'border-gray-200 hover:border-orange-300'
                       }`}
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
@@ -345,11 +295,7 @@ export default function Triagem() {
                 <button
                   type="submit"
                   disabled={!pacienteSelecionado}
-<<<<<<< HEAD
-                  className="w-full bg-orange-600 text-white py-3 px-6 rounded-lg shadow hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 font-semibold"
-=======
                   className="w-full bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                 >
                   Realizar Triagem
                 </button>
@@ -357,11 +303,7 @@ export default function Triagem() {
 
               {mensagem && (
                 <div className={`mt-4 p-4 rounded-lg ${
-<<<<<<< HEAD
-                  mensagem.toLowerCase().includes('sucesso') || mensagem.toLowerCase().includes('success')
-=======
                   mensagem.includes('successfully') 
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                     ? 'bg-green-100 text-green-800 border border-green-200' 
                     : 'bg-red-100 text-red-800 border border-red-200'
                 }`}>

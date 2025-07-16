@@ -5,6 +5,36 @@ import path from 'path'
 const dbPath = path.join(process.cwd(), 'src', 'database', 'db.sqlite')
 const db = new Database(dbPath)
 
+// Função de validação de CPF aprimorada
+function validarCPF(cpf: string): string | true {
+  cpf = cpf.replace(/\D/g, '');
+  if (cpf.length !== 11) return 'CPF deve conter exatamente 11 números.';
+  if (/^(\d)\1{10}$/.test(cpf)) return 'CPF inválido: não pode conter todos os dígitos iguais.';
+  let soma = 0;
+  for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i);
+  let resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.charAt(9))) return 'CPF inválido: dígito verificador 1 incorreto.';
+  soma = 0;
+  for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i);
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.charAt(10))) return 'CPF inválido: dígito verificador 2 incorreto.';
+  return true;
+}
+
+// Função de validação de data de nascimento
+function validarNascimento(nascimento: string): string | true {
+  if (!nascimento) return 'Data de nascimento é obrigatória.';
+  const data = new Date(nascimento);
+  const hoje = new Date();
+  if (isNaN(data.getTime())) return 'Data de nascimento inválida.';
+  if (data > hoje) return 'Data de nascimento não pode ser no futuro.';
+  const idade = hoje.getFullYear() - data.getFullYear();
+  if (idade < 0 || idade > 130) return 'Data de nascimento fora do intervalo permitido.';
+  return true;
+}
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
@@ -27,49 +57,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ error: 'Nome e CPF são obrigatórios' })
       }
 
-<<<<<<< HEAD
       // Validação de CPF
-      function isCpfValido(cpf) {
-        cpf = cpf.replace(/\D/g, '')
-        if (cpf.length !== 11) return 'CPF deve conter exatamente 11 números.'
-        if (/^(\d)\1{10}$/.test(cpf)) return 'CPF inválido: não pode conter todos os dígitos iguais.'
-        let soma = 0
-        for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i)
-        let resto = (soma * 10) % 11
-        if (resto === 10 || resto === 11) resto = 0
-        if (resto !== parseInt(cpf.charAt(9))) return 'CPF inválido.'
-        soma = 0
-        for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i)
-        resto = (soma * 10) % 11
-        if (resto === 10 || resto === 11) resto = 0
-        if (resto !== parseInt(cpf.charAt(10))) return 'CPF inválido.'
-        return true
-      }
-      const cpfValidation = isCpfValido(cpf)
+      const cpfValidation = validarCPF(cpf)
       if (cpfValidation !== true) {
         return res.status(400).json({ error: cpfValidation })
       }
 
-      // Verificar se CPF já existe
-      const pacienteExistente = db.prepare(
-        'SELECT id FROM pacientes WHERE cpf = ?'
-      ).get(cpf) as { id: number } | undefined
+      // Validação de nascimento
+      const nascimentoValidation = validarNascimento(nascimento)
+      if (nascimentoValidation !== true) {
+        return res.status(400).json({ error: nascimentoValidation })
+      }
 
-      if (pacienteExistente && pacienteExistente.id) {
-        const filaExistente = db.prepare(
-          "SELECT id FROM fila WHERE paciente_id = ? AND status IN ('esperando', 'triagem_concluida')"
-        ).get(pacienteExistente.id) as { id: number } | undefined
-        if (!filaExistente) {
-          db.prepare(`
-            INSERT INTO fila (paciente_id, status, chamada_em)
-            VALUES (?, 'esperando', CURRENT_TIMESTAMP)
-          `).run(pacienteExistente.id)
-        }
-        return res.status(200).json({
-          message: 'Paciente já cadastrado. Reutilizado e adicionado à fila.',
-          id: pacienteExistente.id
-        })
-=======
       // Verificar se CPF já existe
       const pacienteExistente = db.prepare(
         'SELECT id FROM pacientes WHERE cpf = ?'
@@ -77,7 +76,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
       if (pacienteExistente) {
         return res.status(409).json({ error: 'CPF já cadastrado' })
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
       }
 
       // Inserir novo paciente AQUI

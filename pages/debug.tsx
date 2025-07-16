@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-<<<<<<< HEAD
 import { useRouter } from 'next/router'
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
 interface DebugData {
   resumo: {
@@ -24,7 +21,6 @@ interface DebugData {
 }
 
 export default function Debug() {
-<<<<<<< HEAD
   const router = useRouter()
   // Proteção de rota: só administrador
   useEffect(() => {
@@ -38,8 +34,6 @@ export default function Debug() {
       router.replace('/');
     }
   }, [router]);
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
   const [debugData, setDebugData] = useState<DebugData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -108,20 +102,8 @@ export default function Debug() {
       <Head>
         <title>Debug - ClinicFlow</title>
       </Head>
-<<<<<<< HEAD
-      <main className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-8">
-            <Link href="/" className="inline-block bg-gray-600 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-700 transition-colors duration-200 font-semibold">
-              ← Voltar ao Menu Principal
-            </Link>
-            <h1 className="text-3xl font-bold text-gray-800">🐞 Debug</h1>
-            <button onClick={() => { localStorage.removeItem('user'); router.push('/login'); }} className="ml-4 bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition-colors duration-200 font-semibold">Sair</button>
-          </div>
-=======
       <main className="min-h-screen bg-gray-100 p-8">
         <div className="container mx-auto">
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-4xl font-bold text-gray-800">Debug - ClinicFlow</h1>
             <div className="flex items-center space-x-4">

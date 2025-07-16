@@ -9,15 +9,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
       const pacientes = db.prepare(`
-<<<<<<< HEAD
-        SELECT p.id, p.nome, p.cpf, p.nascimento, f.id as fila_id
-        FROM pacientes p
-        INNER JOIN fila f ON p.id = f.paciente_id
-        LEFT JOIN triagem t ON t.fila_id = f.id
-        LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
-        WHERE f.status = 'esperando' AND t.id IS NULL AND h.id IS NULL
-        ORDER BY f.id
-=======
         SELECT p.id, p.nome, p.cpf, p.nascimento
         FROM pacientes p
         INNER JOIN fila f ON p.id = f.paciente_id
@@ -25,7 +16,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
         WHERE f.status LIKE '%esperando%' AND t.id IS NULL AND h.id IS NULL
         ORDER BY p.id
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
       `).all()
 
       const todosPacientesFila = db.prepare(`

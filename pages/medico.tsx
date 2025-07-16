@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-<<<<<<< HEAD
 import { useRouter } from 'next/router'
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
 interface PacienteFila {
   id: number
@@ -26,26 +23,17 @@ interface PacienteFila {
 }
 
 export default function Medico() {
-<<<<<<< HEAD
   const router = useRouter()
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
   const [fila, setFila] = useState<PacienteFila[]>([])
   const [pacienteAtual, setPacienteAtual] = useState<PacienteFila | null>(null)
   const [diagnostico, setDiagnostico] = useState('')
   const [prescricao, setPrescricao] = useState('')
   const [mensagem, setMensagem] = useState('')
-<<<<<<< HEAD
   const [mensagemAcao, setMensagemAcao] = useState('')
   const [modalRemover, setModalRemover] = useState<{id: number, nome: string} | null>(null)
   const [motivoRemocao, setMotivoRemocao] = useState('')
   const motivoRef = useRef<HTMLTextAreaElement>(null)
   const [mensagemSucesso, setMensagemSucesso] = useState('')
-=======
-  const [modalRemover, setModalRemover] = useState<{id: number, nome: string} | null>(null)
-  const [motivoRemocao, setMotivoRemocao] = useState('')
-  const motivoRef = useRef<HTMLTextAreaElement>(null)
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
   useEffect(() => {
     carregarFila()
@@ -69,29 +57,21 @@ export default function Medico() {
   }
 
   const chamarProximo = async () => {
-<<<<<<< HEAD
     if (fila.length === 0) {
       setMensagemAcao('Nenhum paciente na fila de atendimento');
       setTimeout(() => setMensagemAcao(''), 3000);
       return;
     }
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
     try {
       const response = await fetch('/api/fila/proximo', {
         method: 'POST',
       })
-<<<<<<< HEAD
-=======
-
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
       if (response.ok) {
         const data = await response.json()
         setPacienteAtual(data)
         setDiagnostico('')
         setPrescricao('')
         carregarFila()
-<<<<<<< HEAD
         setMensagem('')
         setMensagemSucesso('Paciente chamado com sucesso!')
         setTimeout(() => setMensagemSucesso(''), 3000)
@@ -102,27 +82,15 @@ export default function Medico() {
     } catch (error) {
       setMensagem('Erro ao chamar próximo paciente')
       setTimeout(() => setMensagem(''), 3000)
-=======
-      } else {
-        setMensagem('No patients in queue')
-      }
-    } catch (error) {
-      setMensagem('Error calling next patient')
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
     }
   }
 
   const finalizarAtendimento = async () => {
-<<<<<<< HEAD
     if (!pacienteAtual) {
       setMensagemAcao('Nenhum paciente em atendimento');
       setTimeout(() => setMensagemAcao(''), 3000);
       return;
     }
-=======
-    if (!pacienteAtual) return
-
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
     try {
       const response = await fetch(`/api/fila/${pacienteAtual.id}/finalizar`, {
         method: 'PUT',
@@ -134,33 +102,20 @@ export default function Medico() {
           prescricao
         }),
       })
-<<<<<<< HEAD
       if (response.ok) {
         setMensagemSucesso('Atendimento finalizado com sucesso!')
         setTimeout(() => setMensagemSucesso(''), 3000)
-=======
-
-      if (response.ok) {
-        setMensagem('Appointment completed successfully!')
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
         setPacienteAtual(null)
         setDiagnostico('')
         setPrescricao('')
         carregarFila()
       } else {
-<<<<<<< HEAD
         setMensagem('Erro ao finalizar atendimento')
         setTimeout(() => setMensagem(''), 3000)
       }
     } catch (error) {
       setMensagem('Erro ao finalizar atendimento')
       setTimeout(() => setMensagem(''), 3000)
-=======
-        setMensagem('Error completing appointment')
-      }
-    } catch (error) {
-      setMensagem('Error completing appointment')
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
     }
   }
 
@@ -238,21 +193,11 @@ export default function Medico() {
       <Head>
         <title>Médico - ClinicFlow</title>
       </Head>
-<<<<<<< HEAD
       <main className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-bold text-gray-800">👨‍⚕️ Médico</h1>
             <button onClick={() => { localStorage.removeItem('user'); router.push('/login'); }} className="ml-4 bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition-colors duration-200 font-semibold">Sair</button>
-=======
-      <main className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-8">
-            <Link href="/" className="text-green-600 hover:text-green-800">
-              ← Voltar ao Menu Principal
-            </Link>
-            <h1 className="text-3xl font-bold text-gray-800">👨‍⚕️ Área Médica</h1>
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -268,7 +213,6 @@ export default function Medico() {
                   Chamar Próximo
                 </button>
               </div>
-<<<<<<< HEAD
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {fila.length === 0 ? (
                   <p className="text-gray-500 text-center py-4">
@@ -279,18 +223,6 @@ export default function Medico() {
                     <div
                       key={item.id}
                       className="p-3 border rounded-lg cursor-pointer transition-all duration-500 ease-in-out transform hover:scale-105 hover:shadow-lg bg-white animate-fadeIn"
-=======
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {fila.filter(item => item.status !== 'em_atendimento').length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">
-                    Nenhum paciente na fila
-                  </p>
-                ) : (
-                  fila.filter(item => item.status !== 'em_atendimento').map((item, index) => (
-                    <div
-                      key={item.id}
-                      className="p-4 border rounded-lg bg-gray-50"
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-3">
@@ -390,11 +322,7 @@ export default function Medico() {
                     </div>
                     <button
                       onClick={finalizarAtendimento}
-<<<<<<< HEAD
-                      className="w-full bg-green-600 text-white py-3 px-6 rounded-lg shadow hover:bg-green-700 transition-all duration-200 font-semibold"
-=======
                       className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors"
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                     >
                       Finalizar Atendimento
                     </button>
@@ -409,15 +337,9 @@ export default function Medico() {
               )}
               {mensagem && (
                 <div className={`mt-4 p-4 rounded-lg transition-all duration-700 transform ${
-<<<<<<< HEAD
-                  mensagem.toLowerCase().includes('sucesso') || mensagem.toLowerCase().includes('success')
-                    ? 'bg-green-100 text-green-800 border border-green-200'
-                    : 'bg-red-100 text-red-800 border border-red-200'
-=======
                   mensagem.includes('successfully') 
                     ? 'bg-green-100 text-green-800 border border-green-200 animate-fadeIn' 
                     : 'bg-red-100 text-red-800 border border-red-200 animate-fadeIn'
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                 }`}>
                   {mensagem}
                 </div>
@@ -465,7 +387,6 @@ export default function Medico() {
             </div>
           </div>
         )}
-<<<<<<< HEAD
         {/* Mensagem de ação */}
         {mensagemAcao && (
           <div className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-yellow-100 border border-yellow-400 text-yellow-800 px-6 py-3 rounded-lg shadow-lg z-50 text-lg font-semibold animate-fadeIn">
@@ -478,8 +399,6 @@ export default function Medico() {
             {mensagemSucesso}
           </div>
         )}
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
       </main>
     </>
   )

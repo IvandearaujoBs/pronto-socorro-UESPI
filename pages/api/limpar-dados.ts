@@ -8,15 +8,6 @@ const db = new Database(dbPath)
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-<<<<<<< HEAD
-      db.prepare('DELETE FROM triagem').run()
-      db.prepare('DELETE FROM fila').run()
-      db.prepare('DELETE FROM pacientes').run()
-      db.prepare('DELETE FROM historico_remocoes').run()
-      db.prepare('DELETE FROM tempos_maximos').run()
-      db.prepare('DELETE FROM remocoes').run()
-      db.prepare('DELETE FROM sqlite_sequence WHERE name IN (?, ?, ?, ?, ?, ?)').run('pacientes', 'triagem', 'fila', 'historico_remocoes', 'tempos_maximos', 'remocoes')
-=======
       db.prepare('DELETE FROM fila').run()
       db.prepare('DELETE FROM triagem').run()
       db.prepare('DELETE FROM pacientes').run()
@@ -31,7 +22,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           GROUP BY paciente_id
         )
       `).run();
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
       console.log('Banco de dados limpo com sucesso')
       res.status(200).json({ 
         message: 'Banco de dados limpo com sucesso',

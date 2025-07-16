@@ -35,11 +35,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       `).all() as FilaStatus[]
 
       const pacientesComTriagem = db.prepare(`
-<<<<<<< HEAD
-        SELECT f.id as fila_id, p.nome,
-=======
         SELECT DISTINCT p.nome, 
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                CASE 
                  WHEN h.id IS NOT NULL THEN 'excluido'
                  WHEN t.risco = 'vermelho' THEN 'atendido'
@@ -49,13 +45,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                  ELSE 'esperando'
                END as status, 
                t.risco
-<<<<<<< HEAD
-        FROM fila f
-        INNER JOIN pacientes p ON f.paciente_id = p.id
-        LEFT JOIN triagem t ON t.fila_id = f.id
-        LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
-        ORDER BY f.id
-=======
         FROM pacientes p
         LEFT JOIN (
           SELECT DISTINCT paciente_id, status
@@ -69,7 +58,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         LEFT JOIN triagem t ON p.id = t.paciente_id
         LEFT JOIN historico_remocoes h ON p.id = h.paciente_id
         ORDER BY p.id
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
       `).all() as PacienteDetalhado[]
 
       res.status(200).json({

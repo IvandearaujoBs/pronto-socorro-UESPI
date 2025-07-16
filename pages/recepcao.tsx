@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-<<<<<<< HEAD
 import { useRouter } from 'next/router'
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
 
 interface Paciente {
   nome: string
@@ -13,17 +10,13 @@ interface Paciente {
 }
 
 export default function Recepcao() {
-<<<<<<< HEAD
   const router = useRouter()
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
   const [paciente, setPaciente] = useState<Paciente>({
     nome: '',
     cpf: '',
     nascimento: ''
   })
   const [mensagem, setMensagem] = useState('')
-<<<<<<< HEAD
   const [mensagemAcao, setMensagemAcao] = useState('')
   const [mensagemSucesso, setMensagemSucesso] = useState('')
   const [mensagemInfo, setMensagemInfo] = useState('')
@@ -52,11 +45,6 @@ export default function Recepcao() {
         return;
       }
     }
-=======
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
     console.log('Tentando cadastrar paciente:', paciente)
     
     try {
@@ -70,7 +58,6 @@ export default function Recepcao() {
 
       console.log('Response status:', response.status)
       if (response.ok) {
-<<<<<<< HEAD
         setMensagemSucesso('Paciente cadastrado com sucesso!')
         setTimeout(() => setMensagemSucesso(''), 3000)
         setPaciente({ nome: '', cpf: '', nascimento: '' })
@@ -83,18 +70,6 @@ export default function Recepcao() {
       console.error('Error registering patient:', error)
       setMensagemAcao('Erro ao cadastrar paciente')
       setTimeout(() => setMensagemAcao(''), 3000)
-=======
-        setMensagem('Patient registered successfully!')
-        setPaciente({ nome: '', cpf: '', nascimento: '' })
-      } else {
-        const error = await response.json()
-        console.log('Error response:', error)
-        setMensagem(`Error: ${error.message}`)
-      }
-    } catch (error) {
-      console.error('Error registering patient:', error)
-      setMensagem('Error registering patient')
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
     }
   }
 
@@ -102,7 +77,6 @@ export default function Recepcao() {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
   }
 
-<<<<<<< HEAD
   const buscarPacientePorCpf = async (cpf: string) => {
     if (cpf.length === 11) {
       const response = await fetch('/api/pacientes')
@@ -131,18 +105,13 @@ export default function Recepcao() {
     }
   }
 
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
   const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cpf = e.target.value.replace(/\D/g, '')
     if (cpf.length <= 11) {
       setPaciente({ ...paciente, cpf })
-<<<<<<< HEAD
       if (cpf.length === 11) {
         buscarPacientePorCpf(cpf)
       }
-=======
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
     }
   }
 
@@ -155,9 +124,10 @@ export default function Recepcao() {
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
-<<<<<<< HEAD
+            <Link href="/" className="text-blue-600 hover:text-blue-800">
+              ← Voltar ao Menu Principal
+            </Link>
             <h1 className="text-3xl font-bold text-gray-800">👥 Recepção</h1>
-            <button onClick={() => { localStorage.removeItem('user'); router.push('/login'); }} className="ml-4 bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition-colors duration-200 font-semibold">Sair</button>
           </div>
 
           {/* Mensagem de ação (erro) */}
@@ -181,14 +151,6 @@ export default function Recepcao() {
             </div>
           )}
 
-=======
-            <Link href="/" className="text-blue-600 hover:text-blue-800">
-              ← Voltar ao Menu Principal
-            </Link>
-            <h1 className="text-3xl font-bold text-gray-800">👥 Recepção</h1>
-          </div>
-
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
           <div className="max-w-2xl mx-auto">
             {/* Formulário de Cadastro */}
             <div className="bg-white rounded-lg shadow-lg p-8">
@@ -243,25 +205,15 @@ export default function Recepcao() {
 
                 <button
                   type="submit"
-<<<<<<< HEAD
                   className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg shadow hover:bg-blue-700 transition-all duration-200 font-semibold"
                 >
                   {mensagem.includes('já cadastrado') ? 'Enviar para triagem' : 'Cadastrar Paciente'}
-=======
-                  className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold"
-                >
-                  Cadastrar Paciente
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                 </button>
               </form>
 
               {mensagem && (
                 <div className={`mt-4 p-4 rounded-lg ${
-<<<<<<< HEAD
-                  mensagem.toLowerCase().includes('sucesso') || mensagem.toLowerCase().includes('success') || mensagem.toLowerCase().includes('pronto para enviar para triagem')
-=======
                   mensagem.includes('successfully') 
->>>>>>> bf293c99938dfec20360efcd56ff8dde3f8cdb73
                     ? 'bg-green-100 text-green-800 border border-green-200' 
                     : 'bg-red-100 text-red-800 border border-red-200'
                 }`}>
